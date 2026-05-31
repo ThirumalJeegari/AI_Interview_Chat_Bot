@@ -25,15 +25,14 @@ with st.form("Details"):
             Do not give any expalination give only Questions
 
         """
-
-            
+      
 
         response = client.chat.completions.create(
             model = "llama-3.1-8b-instant",
             messages = [
                 {
-                    "role" : "system",
-                    "Content" : prompt
+                    "role" : "user",
+                    "content" : prompt
                     
                 } 
             ]
