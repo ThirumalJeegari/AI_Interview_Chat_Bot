@@ -1,7 +1,7 @@
 import streamlit as st
 from openai import OpenAI
 
-# server_url = st.secrets["backend_url"]
+server_url = st.secrets["backend_url"]
 
 client = OpenAI(
     api_key=st.secrets["api_key"],
