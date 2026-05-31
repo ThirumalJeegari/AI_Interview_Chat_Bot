@@ -42,4 +42,7 @@ Give only questions.
 
         data = response.json()
 
-        st.write(data["response"])
+        if "response" in data:
+            st.write(data["response"])
+        else:
+            st.error(data)
