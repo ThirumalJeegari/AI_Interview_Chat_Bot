@@ -7,7 +7,7 @@ app = FastAPI()
 def home():
     return {"message": "Backend Running Successfully"}
 
-@app.post("/Questions")
+@app.post("/questions")
 async def Questions(req : Request):
     data = await req.json()
     prompt = data["prompt"]
