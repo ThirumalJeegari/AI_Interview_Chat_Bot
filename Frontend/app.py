@@ -23,13 +23,7 @@ with st.form("Details"):
             Give only questions.
         """
 
-        response = requests.post(
-            server_url,
-            json={
-                "prompt": prompt
-            }
-        )
-
+        response = requests.post(server_url,json={"prompt": prompt})
         data = response.json()
         if "response" in data:
             st.write(data["response"])
