@@ -2,6 +2,11 @@ from fastapi import FastAPI,Request
 
 app = FastAPI()
 
+
+@app.get("/")
+def home():
+    return {"message": "Backend Running Successfully"}
+
 @app.post("/Qustions")
 async def Questions(req : Request):
     data = await req.json()
