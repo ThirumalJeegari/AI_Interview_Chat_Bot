@@ -1,19 +1,21 @@
 # AI Interview Chat Bot
 
-## Project Overview
+## Overview
 
-This project is an AI-powered Interview Chat Bot built using:
+AI Interview Chat Bot is a web application that generates interview questions using AI.
 
-* Streamlit (Frontend)
-* FastAPI (Backend)
-* OpenAI / Groq API (AI Model)
-
-The application generates interview questions based on:
+Users can select:
 
 * Programming Language
 * Topic
 * Difficulty Level
 * Question Type
+
+The application uses:
+
+* Streamlit for Frontend
+* FastAPI for Backend
+* Groq/OpenAI API for AI responses
 
 ---
 
@@ -22,10 +24,12 @@ The application generates interview questions based on:
 ## Frontend
 
 * Streamlit
+* Requests
 
 ## Backend
 
 * FastAPI
+* Uvicorn
 
 ## AI Model
 
@@ -34,269 +38,304 @@ The application generates interview questions based on:
 
 ---
 
+# Project Architecture
+
+```text id="pm8on7"
+Frontend (Streamlit)
+        ↓
+Backend (FastAPI)
+        ↓
+Groq/OpenAI API
+```
+
+---
+
 # Project Structure
 
-```text
-ai_interview_chat_bot/
+```text id="18f7eg"
+AI_Interview_Chat_Bot/
 │
-├── app.py
-├── main.py
-├── requirements.txt
-├── README.md
-└── .streamlit/
-    └── secrets.toml
+├── Backend/
+│   ├── main.py
+│   └── requirements.txt
+│
+├── Frontend/
+│   ├── app.py
+│   ├── requirements.txt
+│   └── .streamlit/
+│       └── secrets.toml
+│
+└── README.md
 ```
 
 ---
 
-# Frontend Explanation (`app.py`)
+# Backend Code Explanation
 
-The frontend is created using Streamlit.
+## `main.py`
 
-It collects user input such as:
+The backend is created using FastAPI.
 
-* Language
-* Topic
-* Difficulty Level
-* Question Type
-
-Then it sends the prompt to the AI model and displays the generated questions.
-
----
-
-## Important Components
-
-### Import Libraries
-
-```python
-import streamlit as st
-from openai import OpenAI
-```
-
-* `streamlit` is used for UI
-* `OpenAI` is used to connect with the AI model
-
----
-
-### Streamlit Form
-
-```python
-with st.form("Details"):
-```
-
-This creates a form for user inputs.
-
----
-
-### Input Fields
-
-```python
-Lang = st.text_input("Enter the Language")
-Topic = st.text_input("Enter the Topic")
-```
-
-These fields collect text input from the user.
-
----
-
-### Dropdown Selection
-
-```python
-Level = st.selectbox(...)
-Type = st.selectbox(...)
-```
-
-Used for selecting difficulty and question type.
-
----
-
-### AI Prompt
-
-```python
-prompt = f"""
-Give me Questions in {Lang} Language ...
-"""
-```
-
-This prompt is sent to the AI model.
-
----
-
-### AI Response
-
-```python
-response = client.chat.completions.create(...)
-```
-
-This sends the prompt to the AI model and receives the response.
-
----
-
-### Display Output
-
-```python
-st.write(response.choices[0].message.content)
-```
-
-Displays generated interview questions.
-
----
-
-# Backend Explanation (`main.py`)
-
-The backend is built using FastAPI.
-
-It receives API requests and returns JSON responses.
+It receives prompts from the frontend and sends them to the AI model.
 
 ---
 
 ## Import Libraries
 
-```python
+```python id="1s1drq"
 from fastapi import FastAPI, Request
+from openai import OpenAI
+import os
 ```
 
 ---
 
 ## Create FastAPI App
 
-```python
+```python id="5drwfc"
 app = FastAPI()
 ```
 
-Creates the FastAPI application.
+---
+
+## Connect AI Model
+
+```python id="7fjlwm"
+client = OpenAI(
+    api_key=os.getenv("API_KEY"),
+    base_url=os.getenv("BASE_URL")
+)
+```
+
+Environment variables are used for security.
 
 ---
 
 ## Home Route
 
-```python
+```python id="j2yb44"
 @app.get("/")
-def home():
 ```
 
-This route checks whether the backend server is running.
-
-Output:
-
-```json
-{
-  "message": "Backend Running Successfully"
-}
-```
+Checks whether backend is running.
 
 ---
 
 ## Questions API
 
-```python
-@app.post("/Qustions")
+```python id="72rtt0"
+@app.post("/questions")
 ```
 
-This API accepts POST requests.
+Receives user prompt and generates interview questions.
 
-It receives JSON data from the frontend.
+---
 
-Example:
+# Frontend Code Explanation
 
-```json
-{
-  "prompt": "Java OOP Questions"
-}
+## `app.py`
+
+Frontend is built using Streamlit.
+
+It collects user input and sends it to the backend.
+
+---
+
+## Import Libraries
+
+```python id="3nbnn9"
+import streamlit as st
+import requests
 ```
 
 ---
 
-## Read Request Data
+## Backend URL
 
-```python
-data = await req.json()
+```python id="1a0wpx"
+server_url = st.secrets["backend_url"]
 ```
 
-Reads incoming JSON data.
+Reads backend URL from secrets file.
 
 ---
 
-## Extract Prompt
+## User Inputs
 
-```python
-prompt = data["prompt"]
+```python id="t34lc5"
+Lang = st.text_input()
+Topic = st.text_input()
 ```
 
-Gets the prompt value from JSON.
+Collects language and topic.
 
 ---
 
-## Return Response
+## Dropdown Options
 
-```python
-return {
-    "message": "Promt received",
-    "prompt": prompt
-}
+```python id="jlwmvr"
+Level = st.selectbox(...)
+Type = st.selectbox(...)
 ```
 
-Returns response back to frontend.
+Selects difficulty and question type.
 
 ---
 
-# How to Run the Project
+## Send Request to Backend
 
-## Step 1 — Create Virtual Environment
+```python id="r9dv6n"
+response = requests.post(
+    server_url,
+    json={
+        "prompt": prompt
+    }
+)
+```
 
-```bash
+Sends prompt to FastAPI backend.
+
+---
+
+## Display AI Response
+
+```python id="x6grd7"
+st.write(data["response"])
+```
+
+Displays generated interview questions.
+
+---
+
+# Installation
+
+## Clone Repository
+
+```bash id="rgo8h7"
+git clone https://github.com/your-username/AI_Interview_Chat_Bot.git
+```
+
+---
+
+# Backend Setup
+
+## Move to Backend Folder
+
+```bash id="gsh07q"
+cd Backend
+```
+
+---
+
+## Create Virtual Environment
+
+```bash id="jlwm0w"
 python -m venv .venv
 ```
 
 ---
 
-## Step 2 — Activate Environment
+## Activate Environment
 
 ### Windows
 
-```bash
+```bash id="7k8drg"
 .venv\Scripts\activate
 ```
 
 ---
 
-## Step 3 — Install Packages
+## Install Packages
 
-```bash
-pip install streamlit fastapi uvicorn openai
+```bash id="67m08n"
+pip install -r requirements.txt
 ```
 
 ---
 
-# Run Backend
+## Backend `requirements.txt`
 
-```bash
+```text id="i7fpkq"
+fastapi
+uvicorn
+openai
+python-dotenv
+```
+
+---
+
+## Run Backend
+
+```bash id="k4drvc"
 uvicorn main:app --reload
 ```
 
 Backend URL:
 
-```text
+```text id="34rymg"
 http://127.0.0.1:8000
 ```
 
-Swagger Documentation:
+Swagger Docs:
 
-```text
+```text id="qmk4k7"
 http://127.0.0.1:8000/docs
+```
+
+---
+
+# Frontend Setup
+
+## Move to Frontend Folder
+
+```bash id="dt4t76"
+cd Frontend
+```
+
+---
+
+## Install Packages
+
+```bash id="g8sy1g"
+pip install -r requirements.txt
+```
+
+---
+
+## Frontend `requirements.txt`
+
+```text id="rv6x7m"
+streamlit
+requests
+```
+
+---
+
+# Configure Streamlit Secrets
+
+Create file:
+
+```text id="nht7iy"
+.streamlit/secrets.toml
+```
+
+Add:
+
+```toml id="jlwmn2"
+backend_url = "https://your-render-url.onrender.com/questions"
 ```
 
 ---
 
 # Run Frontend
 
-```bash
+```bash id="t3l3ew"
 streamlit run app.py
 ```
 
 Frontend URL:
 
-```text
+```text id="jlwmqe"
 http://localhost:8501
 ```
 
@@ -304,55 +343,71 @@ http://localhost:8501
 
 # Deploy Backend on Render
 
-1. Push project to GitHub
+## Steps
+
+1. Push Backend Code to GitHub
 2. Open Render
 3. Create New Web Service
 4. Connect GitHub Repository
-5. Add Commands
+
+---
 
 ## Build Command
 
-```text
+```text id="3m2zy2"
 pip install -r requirements.txt
 ```
 
+---
+
 ## Start Command
 
-```text
+```text id="jlwmu6"
 uvicorn main:app --host 0.0.0.0 --port 10000
 ```
 
 ---
 
+## Add Environment Variables
+
+| Key      | Value                          |
+| -------- | ------------------------------ |
+| API_KEY  | Your API Key                   |
+| BASE_URL | https://api.groq.com/openai/v1 |
+
+---
+
 # Deploy Frontend on Streamlit Cloud
 
-1. Push project to GitHub
+1. Push Frontend Code to GitHub
 2. Open Streamlit Cloud
 3. Select Repository
 4. Deploy `app.py`
 
 ---
 
-# Example Output
+# Features
 
-* Java MCQs
-* Python Theory Questions
-* SQL Coding Questions
-* JavaScript Interview Questions
+* AI-generated interview questions
+* Multiple difficulty levels
+* MCQs and Coding Questions
+* FastAPI backend
+* Streamlit UI
+* Cloud deployment support
 
 ---
 
 # Future Improvements
 
 * Add Authentication
-* Add Chat History
-* Save Questions in Database
+* Save Chat History
 * Add Voice Input
-* Add PDF Download Feature
+* Add PDF Export
+* Add Dark Mode
+* Add Multiple AI Models
 
 ---
 
 # Author
 
 Jeegari Thirumal
-
