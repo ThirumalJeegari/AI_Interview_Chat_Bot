@@ -14,7 +14,7 @@ with st.form("Details"):
     Level = st.selectbox("Enter the Level",["Easy","Medium","Advance"])
     Type = st.selectbox("Enter the Type",["MCQ's","Theory Questions","Coding Snippets"])
 
-    Submit_Button = st.button("Submit")
+    Submit_Button = st.form_submit_button("Submit")
 
     if Submit_Button:
 
