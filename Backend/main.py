@@ -5,8 +5,8 @@ import os
 app = FastAPI()
 
 client = OpenAI(
-    api_key=os.getenv("API_KEY"),
-    base_url=os.getenv("BASE_URL")
+    api_key=os.getenv("api_key"),
+    base_url=os.getenv("base_url ")
 )
 
 @app.get("/")
